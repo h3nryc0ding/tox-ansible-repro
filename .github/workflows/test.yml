@@ -1,0 +1,23 @@
+name: integration-test
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+    integration-test:
+      strategy:
+        matrix:
+          os: [ubuntu-latest, macos-latest]
+      runs-on: ${{ matrix.os }}
+      steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12
+      - name: Install ansible-tox
+        run: pip install .
+      - name: Run example tests
+        working-directory: example/broken
+        run: tox -e sanity-py3.12-2.17 --ansible --conf tox-ansible.ini
